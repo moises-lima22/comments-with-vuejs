@@ -27,14 +27,14 @@
             <p>
               <textarea placeholder="Comentário" name="message"  class="form-control" v-model="message"></textarea>
             </p>
-            <button @click="addComment" type="submit" class="btn btn-primary">Comentar</button>
+            <button v-on:click="addComment" type="submit" class="btn btn-primary">Comentar</button>
           </div>
           <div class="list-group">
-            <div class="list-group-item" v-for="(comment, index) in comments">
+            <div class="list-group-item" v-for="(comment, index) in allComments">
               <span class="comment__author">Autor: <strong>{{ comment.name }}</strong></span>
               <p>{{ comment.message }}</p>
               <div>
-                  <a href="#" title="Excluir" @click.prevent="removeComment(index)">Excluir</a>
+                <a href="#" title="Excluir" v-on:click.prevent="removeComment(index)">Excluir</a>
               </div>
             </div>
           </div>
@@ -50,22 +50,35 @@
       },
       methods: {
         addComment() {
-          if (this.name.trim() === '' || this.message.trim() === '') { return; }
+          if (this.message.trim() === '') {
+            return;
+          }
+
           this.comments.push({
             name: this.name,
             message: this.message
           });
 
-          this.name = "";
-          this.message = "";
+          this.name = '';
+          this.message = '';
         },
-
         removeComment(index) {
-          this.comments.splice(index,1)
-
+          this.comments.splice(index, 1);
+        }
+      },
+      computed: {
+        allComments() {
+          return this.comments.map(comment => ({
+            ...comment,
+            name: comment.name.trim() === '' ? 'Anônimo' : comment.name
+          }))
+        }
+      },
+      watch: {
+        comments(val) {
+          console.log('val', val)
         }
       }
-
     })
   </script>
 
